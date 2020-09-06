@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        periodicWorkRequest = new PeriodicWorkRequest.Builder(CurrencyWorker.class, 15, TimeUnit.MINUTES)
+        periodicWorkRequest = new PeriodicWorkRequest.Builder(CurrencyWorker.class, 60, TimeUnit.MINUTES)
                 .setConstraints(constraints)
                 .build();
 
