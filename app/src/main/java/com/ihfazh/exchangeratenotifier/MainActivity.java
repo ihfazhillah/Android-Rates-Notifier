@@ -88,7 +88,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        jobScheduler.cancel(jobId);
 //        Toast.makeText(this, "Job Sudah dicancel.", Toast.LENGTH_SHORT).show();
 //        finish();
-        WorkManager.getInstance().cancelWorkById(periodicWorkRequest.getId());
+        if (periodicWorkRequest != null){
+            WorkManager.getInstance().cancelWorkById(periodicWorkRequest.getId());
+        }
     }
 
     private void startJob() {
