@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         builder.setRequiresDeviceIdle(false);
         builder.setRequiresCharging(false);
 
-        builder.setPeriodic(180000);
+        // 1 jam sekali
+        builder.setPeriodic(60 * 60 * 1000);
 
         JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(builder.build());

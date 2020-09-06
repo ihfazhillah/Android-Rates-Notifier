@@ -87,7 +87,7 @@ public class GetCurrencyJobService extends JobService {
                 .setContentTitle(title)
                 .setContentText(description)
                 .setColor(ContextCompat.getColor(context, android.R.color.black))
-                .setVibrate(new long[] {2000, 1000, 2000, 4000, 1000})
+                .setVibrate(new long[] {2000, 1000, 2000, 4000, 1000, 10000})
                 .setSmallIcon(R.drawable.ic_baseline_money_24)
                 .setSound(ringtone);
 
