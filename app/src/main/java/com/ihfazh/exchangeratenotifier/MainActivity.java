@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.work.Constraints;
 import androidx.work.Data;
+import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
@@ -21,12 +24,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button btnStart, btnCancel, btnSetOnce;
     TextView textStatus;
     private int jobId = 10;
+    private PeriodicWorkRequest periodicWorkRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,31 +84,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void cancelJob() {
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.cancel(jobId);
-        Toast.makeText(this, "Job Sudah dicancel.", Toast.LENGTH_SHORT).show();
-        finish();
+//        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//        jobScheduler.cancel(jobId);
+//        Toast.makeText(this, "Job Sudah dicancel.", Toast.LENGTH_SHORT).show();
+//        finish();
+        WorkManager.getInstance().cancelWorkById(periodicWorkRequest.getId());
     }
 
     private void startJob() {
-        if (isJobRunning(this)){
-            Toast.makeText(this, "Job already running", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if (isJobRunning(this)){
+//            Toast.makeText(this, "Job already running", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        ComponentName mServiceComponent = new ComponentName(this, GetCurrencyJobService.class);
+//        JobInfo.Builder builder = new JobInfo.Builder(jobId, mServiceComponent);
+//        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+//        builder.setRequiresDeviceIdle(false);
+//        builder.setRequiresCharging(false);
+//
+//        // 1 jam sekali
+//        builder.setPeriodic(60 * 60 * 1000);
+//
+//        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//        jobScheduler.schedule(builder.build());
+//
+//        Toast.makeText(this, "Job Sudah dimulai.", Toast.LENGTH_SHORT).show();
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        periodicWorkRequest = new PeriodicWorkRequest.Builder(CurrencyWorker.class, 15, TimeUnit.MINUTES)
+                .setConstraints(constraints)
+                .build();
 
-        ComponentName mServiceComponent = new ComponentName(this, GetCurrencyJobService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(jobId, mServiceComponent);
-        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-        builder.setRequiresDeviceIdle(false);
-        builder.setRequiresCharging(false);
+        WorkManager.getInstance().enqueue(periodicWorkRequest);
 
-        // 1 jam sekali
-        builder.setPeriodic(60 * 60 * 1000);
+        WorkManager.getInstance().getWorkInfoByIdLiveData(periodicWorkRequest.getId()).observe(MainActivity.this, new Observer<WorkInfo>() {
+            @Override
+            public void onChanged(WorkInfo workInfo) {
+                String status = workInfo.getState().name();
+                textStatus.append("\n" + status);
 
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(builder.build());
+                btnCancel.setEnabled(false);
 
-        Toast.makeText(this, "Job Sudah dimulai.", Toast.LENGTH_SHORT).show();
+                if (workInfo.getState() == WorkInfo.State.ENQUEUED){
+                    btnCancel.setEnabled(true);
+                }
+            }
+        });
+
     }
 
     private boolean isJobRunning(Context context) {
