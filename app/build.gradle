@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def apiKeyPropertiesFile = rootProject.file("apikeys.properties")
+def apiKeysProperties = new Properties()
+apiKeysProperties.load(new FileInputStream(apiKeyPropertiesFile))
+
 android {
     compileSdkVersion 30
 
@@ -11,6 +15,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "FIXER_IO_API_KEY", apiKeysProperties["FIXER_API_KEY"])
     }
 
     buildTypes {
