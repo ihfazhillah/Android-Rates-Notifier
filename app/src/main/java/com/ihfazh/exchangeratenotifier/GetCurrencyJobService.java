@@ -28,9 +28,9 @@ import cz.msebera.android.httpclient.Header;
 
 public class GetCurrencyJobService extends JobService {
     private final String TAG = GetCurrencyJobService.class.getSimpleName();
-    private String apiKey = BuildConfig.FIXER_IO_API_KEY;
+    private String apiKey = BuildConfig.OPEN_EXCHANGE_RATES;
 
-    private String BASE_URL = "http://data.fixer.io/api/latest";
+    private String BASE_URL = "https://openexchangerates.org/api/latest.json";
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
@@ -42,11 +42,12 @@ public class GetCurrencyJobService extends JobService {
     private void getCurrency(final JobParameters jobParameters) {
         Log.d(TAG, "Job running...");
         AsyncHttpClient client = new AsyncHttpClient();
-        String url = BASE_URL + "?access_key=" + apiKey + "&base=USD&symbols=IDR";
+        String url = BASE_URL + "?app_id=" + apiKey + "&base=USD&symbols=IDR";
         client.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String result = new String(responseBody);
+                Log.d(TAG, result);
 
                 try {
                     JSONObject resultObject = new JSONObject(result);

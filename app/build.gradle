@@ -16,7 +16,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "FIXER_IO_API_KEY", apiKeysProperties["FIXER_API_KEY"])
+        buildConfigField("String", "OPEN_EXCHANGE_RATES", apiKeysProperties["OPEN_EXCHANGE_RATES"])
     }
 
     buildTypes {
