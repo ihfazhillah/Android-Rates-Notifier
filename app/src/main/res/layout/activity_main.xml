@@ -13,13 +13,20 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:text="@string/keterangan"
+        android:layout_marginBottom="16dp"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/get_now_btn"
+        android:id="@+id/btn_run_once"
         />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="16dp"
             >
             <Button
                 android:id="@+id/btn_start"
@@ -37,5 +44,17 @@
                 />
 
         </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/status_label"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Hello world"
+        android:id="@+id/status_detail"/>
 
 </LinearLayout>

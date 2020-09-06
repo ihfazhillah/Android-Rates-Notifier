@@ -3,6 +3,11 @@ package com.ihfazh.exchangeratenotifier;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -12,13 +17,15 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button btnStart, btnCancel;
+    Button btnStart, btnCancel, btnSetOnce;
+    TextView textStatus;
     private int jobId = 10;
 
     @Override
@@ -28,9 +35,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnStart = findViewById(R.id.btn_start);
         btnCancel = findViewById(R.id.btn_cancel);
+        btnSetOnce = findViewById(R.id.btn_run_once);
+        textStatus = findViewById(R.id.status_detail);
 
         btnCancel.setOnClickListener(this);
         btnStart.setOnClickListener(this);
+        btnSetOnce.setOnClickListener(this);
     }
 
     @Override
@@ -42,8 +52,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_cancel:
                 cancelJob();
                 break;
+            case R.id.btn_run_once:
+                startOneTimeTask();
+                break;
         }
 
+    }
+
+    private void startOneTimeTask() {
+        Data dataBuilder = new Data.Builder().build();
+        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(CurrencyWorker.class)
+                .setInputData(dataBuilder)
+                .build();
+
+        WorkManager.getInstance().enqueue(oneTimeWorkRequest);
+
+        WorkManager.getInstance().getWorkInfoByIdLiveData(oneTimeWorkRequest.getId()).observe(
+                MainActivity.this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        String status = workInfo.getState().name();
+                        textStatus.append("\n" + status);
+                    }
+                }
+        );
     }
 
     private void cancelJob() {

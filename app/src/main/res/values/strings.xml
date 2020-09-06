@@ -3,4 +3,6 @@
     <string name="keterangan"><![CDATA[Notifikasi Currency Rate USD -> IDR setiap jam]]></string>
     <string name="start">Start</string>
     <string name="cancel">Cancel</string>
+    <string name="get_now_btn">Dapatkan Sekarang</string>
+    <string name="status_label">Status:</string>
 </resources>

@@ -5,11 +5,13 @@ import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.SyncHttpClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -25,8 +27,8 @@ public class CurrencyService {
 
     public void getRate(String base, String symbol){
         Log.d(TAG, "Job running...");
-        AsyncHttpClient client = new AsyncHttpClient();
-        String url = BASE_URL + "?app_id=" + apiKey + "&base=USD&symbols=IDR";
+        SyncHttpClient client = new SyncHttpClient();
+        String url = MessageFormat.format("{0}?app_id={1}&base={2}&symbols={3}", BASE_URL, apiKey, base, symbol);
         client.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -51,6 +53,7 @@ public class CurrencyService {
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                 mCallback.onError(new String(responseBody));
             }
+
         });
 
     }

@@ -29,7 +29,6 @@ public class CurrencyWorker extends Worker {
     @Override
     public Result doWork() {
         CurrencyService currencyService = new CurrencyService();
-        currencyService.getRate("USD", "IDR");
         currencyService.setmCallback(new CurrencyService.CurrencyServiceCallback() {
             @Override
             public void setRate(String rate) {
@@ -45,6 +44,8 @@ public class CurrencyWorker extends Worker {
                 resultStatus = Result.failure();
             }
         });
+
+        currencyService.getRate("USD", "IDR");
 
         return resultStatus;
     }
