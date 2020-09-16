@@ -84,40 +84,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void cancelJob() {
-//        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//        jobScheduler.cancel(jobId);
-//        Toast.makeText(this, "Job Sudah dicancel.", Toast.LENGTH_SHORT).show();
-//        finish();
-        if (periodicWorkRequest != null){
-            WorkManager.getInstance().cancelWorkById(periodicWorkRequest.getId());
-        }
+        getPeriodicWorkRequest();
+        WorkManager.getInstance().cancelWorkById(periodicWorkRequest.getId());
     }
 
+
+
     private void startJob() {
-//        if (isJobRunning(this)){
-//            Toast.makeText(this, "Job already running", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//        ComponentName mServiceComponent = new ComponentName(this, GetCurrencyJobService.class);
-//        JobInfo.Builder builder = new JobInfo.Builder(jobId, mServiceComponent);
-//        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-//        builder.setRequiresDeviceIdle(false);
-//        builder.setRequiresCharging(false);
-//
-//        // 1 jam sekali
-//        builder.setPeriodic(60 * 60 * 1000);
-//
-//        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//        jobScheduler.schedule(builder.build());
-//
-//        Toast.makeText(this, "Job Sudah dimulai.", Toast.LENGTH_SHORT).show();
-        Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-        periodicWorkRequest = new PeriodicWorkRequest.Builder(CurrencyWorker.class, 60, TimeUnit.MINUTES)
-                .setConstraints(constraints)
-                .build();
+        getPeriodicWorkRequest();
 
         WorkManager.getInstance().enqueue(periodicWorkRequest);
 
@@ -137,21 +111,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private boolean isJobRunning(Context context) {
-        Boolean isScheduled = false;
-
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-
-        if (jobScheduler != null){
-            for (JobInfo jobInfo: jobScheduler.getAllPendingJobs()) {
-                if (jobInfo.getId() == jobId){
-                    isScheduled = true;
-                    break;
-                }
-
-            }
+    private void getPeriodicWorkRequest() {
+        if (periodicWorkRequest == null){
+            Constraints constraints = new Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build();
+            periodicWorkRequest = new PeriodicWorkRequest.Builder(CurrencyWorker.class, 60, TimeUnit.MINUTES)
+                    .setConstraints(constraints)
+                    .build();
         }
-
-        return isScheduled;
     }
+
 }
