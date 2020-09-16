@@ -84,8 +84,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void cancelJob() {
-        getPeriodicWorkRequest();
-        WorkManager.getInstance().cancelWorkById(periodicWorkRequest.getId());
+//        getPeriodicWorkRequest();
+//        WorkManager.getInstance().cancelWorkById(periodicWorkRequest.getId());
+        WorkManager.getInstance().cancelAllWorkByTag("GETCURRENCYNOTIFIER");
     }
 
 
@@ -112,14 +113,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getPeriodicWorkRequest() {
-        if (periodicWorkRequest == null){
             Constraints constraints = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
             periodicWorkRequest = new PeriodicWorkRequest.Builder(CurrencyWorker.class, 60, TimeUnit.MINUTES)
                     .setConstraints(constraints)
+                    .addTag("GETCURRENCYNOTIFIER")
                     .build();
-        }
     }
 
 }
